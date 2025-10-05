@@ -162,3 +162,10 @@ code {
 ul {
   padding-inline-start: 1rem;
 }
+
+mark {
+  background-color: transparent;
+  color: color-mix(in srgb, var(--highlight) 100%, transparent);
+  font-weight: 500;
+}
+

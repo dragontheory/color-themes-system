@@ -1,0 +1,214 @@
+/* ===== System-aware defaults ===== */
+:root {
+  color-scheme: light dark;
+  --default-bg: light-dark(#ffffff, hsl(222 10% 10%));
+  --default-fg: light-dark(#111111, hsl(0 0% 96%));
+  --default-highlight: light-dark(hsl(210 100% 46%), hsl(210 100% 60%));
+
+  /* resolved tokens */
+  --bg: var(--brand-bg, var(--default-bg));
+  --fg: var(--brand-fg, var(--default-fg));
+  --highlight: var(--brand-highlight, var(--default-highlight));
+
+  /* derived */
+  --border: color-mix(in srgb, var(--fg) 20%, var(--bg));
+  --muted: color-mix(in srgb, var(--fg) 40%, var(--bg));
+  
+  --button-bg: var(--default-highlight);
+  --button-text: var(--fg);
+}
+
+/* ===== CSS-only user presets (no IDs/classes) ===== */
+/* Scheme: Auto = do nothing (already OS-coupled) */
+
+/* Force Light */
+:root:has([name="scheme"][value="light"]:checked) {
+  --bg: #ffffff;
+  --fg: #111111;
+  --highlight: hsl(210 100% 46%);
+}
+
+/* Force Dark */
+:root:has([name="scheme"][value="dark"]:checked) {
+  --bg: hsl(222 10% 10%);
+  --fg: hsl(0 0% 96%);
+  --highlight: hsl(210 100% 60%);
+}
+
+/* Accent presets */
+:root:has([name="accent"][value="blue"]:checked) {
+  --brand-highlight: hsl(210 100% 50%);
+}
+:root:has([name="accent"][value="orange"]:checked) {
+  --brand-highlight: hsl(26 100% 50%);
+}
+:root:has([name="accent"][value="green"]:checked) {
+  --brand-highlight: hsl(145 70% 42%);
+}
+:root:has([name="accent"][value="pink"]:checked) {
+  --brand-highlight: hsl(330 75% 60%);
+}
+
+:root:has([name="accent"]:checked){ --highlight: var(--brand-highlight) !important; }
+
+
+/* ===== Respect OS forced colors ===== */
+@media (forced-colors: active) {
+  :root {
+    --bg: Canvas;
+    --fg: CanvasText;
+    --highlight: LinkText;
+    --border: CanvasText;
+    --muted: GrayText;
+  }
+}
+
+/* ===== One-time plumbing ===== */
+html {
+  background: var(--bg);
+  color: var(--fg);
+  accent-color: var(--highlight);
+  font-family: system-ui, sans-serif;
+  min-height: 100dvh;
+}
+body {
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+  place-content: center;
+  padding: 2rem;
+}
+a {
+  color: var(--highlight);
+}
+::selection {
+  background: color-mix(in srgb, var(--highlight) 30%, transparent);
+}
+fieldset {
+  border: 1px solid var(--border);
+  padding: 0.75rem;
+}
+legend {
+  font-weight: 600;
+}
+label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-end: 1rem;
+}
+button {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Native color input (classless) */
+input[type="color"] {
+  inline-size: 2.5rem;
+  block-size: 2rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  background: transparent;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-webkit-color-swatch,
+input[type="color"]::-moz-color-swatch {
+  border: 0;
+}
+
+/* Make the custom color label visibly “inactive” (no-JS mode) */
+label:has(input[type="color"]) small {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* MARK: DEFINITIONS */
+:root {
+  --transition-duration: 250ms;
+  --transition-property: visibility, opacity, display, transform, background,
+    background-color, border-color, color, min-width;
+  --transition-timing-function: ease-in-out;
+
+  scroll-behavior: smooth;
+
+  /* https://html-css-tip-of-the-week.netlify.app/tip/interpolate-size/
+  https://12daysofweb.dev/2024/calc-size-and-interpolate-size/ */
+  interpolate-size: allow-keywords;
+}
+
+* {
+  transition-property: var(--transition-property);
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-timing-function);
+  transition-behavior: allow-discrete;
+}
+
+/* Accessibility feature */
+@media (prefers-reduced-motion) {
+  * {
+    transition-duration: 0ms;
+  }
+}
+
+/* https://adactio.com/journal/21896 */
+/*https://webkit.org/blog/7551/responsive-design-for-motion/ */
+@media (prefers-reduced-motion: no-preference) {
+  /* https://webkit.org/blog/16967/two-lines-of-cross-document-view-transitions-code-you-can-use-on-every-website-today/ */
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+/* https://www.bram.us/2025/01/29/view-transitions-page-interactivity/ */
+@layer view-transitions {
+  /* Don’t capture the root, allowing pointer interaction while elements are animating */
+  @layer no-root {
+    :root {
+      view-transition-name: none;
+    }
+
+    ::view-transition {
+      pointer-events: none;
+    }
+  }
+}
+
+@starting-style {
+  * {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+aside {
+  transition: all;
+}
+
+main article ul:last-of-type {
+  overflow-x: auto;
+  scroll-snap-type: y mandatory;
+
+  > * {
+    grid-template-columns: auto;
+    scroll-snap-align: start;
+  }
+}
+
+button {
+  padding: .5rem 1rem;
+  border: none;
+  cursor: pointer;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover {
+  background-color: var(--text-color);
+  color: var(--background-color);
+}

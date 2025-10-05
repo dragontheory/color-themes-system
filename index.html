@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>CSS-Only Theming Core</title>
+<style>
+  /* ===== System-aware defaults ===== */
+  :root{
+    color-scheme: light dark;
+    --default-bg:        light-dark(#ffffff, hsl(222 10% 10%));
+    --default-fg:        light-dark(#111111, hsl(0 0% 96%));
+    --default-highlight: light-dark(hsl(210 100% 46%), hsl(210 100% 60%));
+
+    /* resolved tokens */
+    --bg:        var(--brand-bg,        var(--default-bg));
+    --fg:        var(--brand-fg,        var(--default-fg));
+    --highlight: var(--brand-highlight, var(--default-highlight));
+
+    /* derived */
+    --border: color-mix(in srgb, var(--fg) 20%, var(--bg));
+    --muted:  color-mix(in srgb, var(--fg) 40%, var(--bg));
+  }
+
+  /* ===== CSS-only user presets (no IDs/classes) ===== */
+  /* Scheme: Auto = do nothing (already OS-coupled) */
+
+  /* Force Light */
+  :root:has([name="scheme"][value="light"]:checked){
+    --bg: #ffffff; --fg:#111111; --highlight: hsl(210 100% 46%);
+  }
+
+  /* Force Dark */
+  :root:has([name="scheme"][value="dark"]:checked){
+    --bg: hsl(222 10% 10%); --fg:hsl(0 0% 96%); --highlight:hsl(210 100% 60%);
+  }
+
+  /* Accent presets */
+  :root:has([name="accent"][value="blue"]:checked)   { --brand-highlight: hsl(210 100% 50%); }
+  :root:has([name="accent"][value="orange"]:checked) { --brand-highlight: hsl(26 100% 50%); }
+  :root:has([name="accent"][value="green"]:checked)  { --brand-highlight: hsl(145 70% 42%); }
+  :root:has([name="accent"][value="pink"]:checked)   { --brand-highlight: hsl(330 75% 60%); }
+
+  /* ===== Respect OS forced colors ===== */
+  @media (forced-colors: active){
+    :root{
+      --bg: Canvas; --fg: CanvasText; --highlight: LinkText;
+      --border: CanvasText; --muted: GrayText;
+    }
+  }
+
+  /* ===== One-time plumbing ===== */
+  html{ background:var(--bg); color:var(--fg); accent-color:var(--highlight);
+        font-family:system-ui,sans-serif; min-height:100dvh; }
+  body{ margin:0; display:grid; gap:1rem; place-content:center; padding:2rem; }
+  a{ color:var(--highlight); }
+  ::selection{ background: color-mix(in srgb, var(--highlight) 30%, transparent); }
+  fieldset{ border:1px solid var(--border); padding:.75rem; }
+  legend{ font-weight:600; }
+  label{ display:inline-flex; align-items:center; gap:.5rem; margin-inline-end:1rem; }
+  button{ border:1px solid var(--border); background:transparent; color:inherit; padding:.5rem .75rem; }
+
+  /* Native color input (classless) */
+  input[type="color"]{ inline-size:2.5rem; block-size:2rem; padding:0; border:1px solid var(--border); background:transparent; }
+  input[type="color"]::-webkit-color-swatch-wrapper{ padding:0; }
+  input[type="color"]::-webkit-color-swatch,
+  input[type="color"]::-moz-color-swatch{ border:0; }
+
+  /* Make the custom color label visibly “inactive” (no-JS mode) */
+  label:has(input[type="color"]) small{ color:var(--muted); font-style:italic; }
+</style>
+
+<h1>CSS-Only Theming</h1>
+<p>Defaults follow your OS. Choose a scheme or accent below (no JS).</p>
+
+<form>
+  <fieldset>
+    <legend>Scheme</legend>
+    <label><input type="radio" name="scheme" value="auto" checked> Auto (OS)</label>
+    <label><input type="radio" name="scheme" value="light"> Light</label>
+    <label><input type="radio" name="scheme" value="dark"> Dark</label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Accent</legend>
+    <label><input type="radio" name="accent" value="blue" checked> Blue</label>
+    <label><input type="radio" name="accent" value="orange"> Orange</label>
+    <label><input type="radio" name="accent" value="green"> Green</label>
+    <label><input type="radio" name="accent" value="pink"> Pink</label>
+
+    <!-- Pure CSS can't apply this value; keep for preview only until persistence is added -->
+    <label> Custom <input type="color" value="#0077ff"> <small>(takes effect when saved)</small></label>
+  </fieldset>
+</form>
+
+<p>
+  <a href="#">Example link</a> · <button>Example button</button>
+</p>
+</html>

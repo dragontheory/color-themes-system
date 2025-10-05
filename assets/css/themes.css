@@ -80,6 +80,10 @@ body {
 }
 a {
   color: var(--highlight);
+
+  :hover {
+    color: color-mix(in srgb, var(--highlight) 30%, transparent);
+  }
 }
 ::selection {
   background: color-mix(in srgb, var(--highlight) 30%, transparent);

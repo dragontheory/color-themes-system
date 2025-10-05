@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&display=swap');
+
 /* ===== System-aware defaults ===== */
 :root {
   color-scheme: light dark;
@@ -16,6 +18,9 @@
   
   --button-bg: var(--default-highlight);
   --button-text: var(--fg);
+  
+  font-family: Oxanium, sans-serif;
+  font-size: 1rem;
 }
 
 /* ===== CSS-only user presets (no IDs/classes) ===== */
@@ -83,29 +88,26 @@ a {
 }
 
 a:hover {
-  color: color-mix(in srgb, var(--highlight) 100%, transparent);
-}
+    color: color-mix(in srgb, var(--highlight) 100%, transparent);
+  }
 
 ::selection {
   background: color-mix(in srgb, var(--highlight) 30%, transparent);
 }
-
 fieldset {
   border: 1px solid var(--border);
   padding: 0.75rem;
+  border-radius: 0.3rem;
 }
-
 legend {
   font-weight: 600;
 }
-
 label {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   margin-inline-end: 1rem;
 }
-
 button {
   border: 1px solid var(--border);
   background: transparent;
@@ -120,6 +122,7 @@ input[type="color"] {
   padding: 0;
   border: 1px solid var(--border);
   background: transparent;
+  cursor: pointer;
 }
 input[type="color"]::-webkit-color-swatch-wrapper {
   padding: 0;
@@ -135,78 +138,6 @@ label:has(input[type="color"]) small {
   font-style: italic;
 }
 
-/* MARK: DEFINITIONS */
-:root {
-  --transition-duration: 250ms;
-  --transition-property: visibility, opacity, display, transform, background,
-    background-color, border-color, color, min-width;
-  --transition-timing-function: ease-in-out;
-
-  scroll-behavior: smooth;
-
-  /* https://html-css-tip-of-the-week.netlify.app/tip/interpolate-size/
-  https://12daysofweb.dev/2024/calc-size-and-interpolate-size/ */
-  interpolate-size: allow-keywords;
-}
-
-* {
-  transition-property: var(--transition-property);
-  transition-duration: var(--transition-duration);
-  transition-timing-function: var(--transition-timing-function);
-  transition-behavior: allow-discrete;
-}
-
-/* Accessibility feature */
-@media (prefers-reduced-motion) {
-  * {
-    transition-duration: 0ms;
-  }
-}
-
-/* https://adactio.com/journal/21896 */
-/*https://webkit.org/blog/7551/responsive-design-for-motion/ */
-@media (prefers-reduced-motion: no-preference) {
-  /* https://webkit.org/blog/16967/two-lines-of-cross-document-view-transitions-code-you-can-use-on-every-website-today/ */
-  @view-transition {
-    navigation: auto;
-  }
-}
-
-/* https://www.bram.us/2025/01/29/view-transitions-page-interactivity/ */
-@layer view-transitions {
-  /* Don’t capture the root, allowing pointer interaction while elements are animating */
-  @layer no-root {
-    :root {
-      view-transition-name: none;
-    }
-
-    ::view-transition {
-      pointer-events: none;
-    }
-  }
-}
-
-@starting-style {
-  * {
-    visibility: hidden;
-    opacity: 0;
-  }
-}
-
-aside {
-  transition: all;
-}
-
-main article ul:last-of-type {
-  overflow-x: auto;
-  scroll-snap-type: y mandatory;
-
-  > * {
-    grid-template-columns: auto;
-    scroll-snap-align: start;
-  }
-}
-
 button {
   padding: .5rem 1rem;
   border: none;
@@ -219,5 +150,11 @@ button {
 button:hover {
   background-color: color-mix(in srgb, var(--highlight) 100%, transparent);
   color: var(--background-color);
-  
+}
+
+code {
+  background-color: color-mix(in srgb, var(--highlight) 25%, transparent);
+  border: solid 1px color-mix(in srgb, var(--highlight) 100%, transparent);
+  border-radius: 0.3rem;
+  padding: .05rem .1rem;
 }
